@@ -18,7 +18,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.zerock.api01.security.APIUserDetailsService;
 import org.zerock.api01.security.filter.APILoginFilter;
+import org.zerock.api01.security.filter.TokenCheckFilter;
 import org.zerock.api01.security.handler.APILoginSuccessHandler;
+import org.zerock.api01.util.JWTUtil;
 
 @Configuration
 @Log4j2
@@ -28,6 +30,7 @@ import org.zerock.api01.security.handler.APILoginSuccessHandler;
 public class CustomSecurityConfig {
 
     private final APIUserDetailsService userDetailsService;
+    private final JWTUtil jwtUtil;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -64,25 +67,35 @@ public class CustomSecurityConfig {
 
         // APILoginFilter를 불러올때 사용 할 URL 설정
         APILoginFilter apiLoginFilter = new APILoginFilter("/generateToken");
-        
+
         // APILoginFilter가 위에서 만든 인증 관리자를 사용할지 설정
         apiLoginFilter.setAuthenticationManager(authenticationManager);
 
         // APILoginSuccessHandler
-        APILoginSuccessHandler successHandler = new APILoginSuccessHandler();
-        
+        APILoginSuccessHandler successHandler = new APILoginSuccessHandler(jwtUtil);
+
         // SuccessHandler 세팅
         apiLoginFilter.setAuthenticationSuccessHandler(successHandler);
-        
+
         // APILoginFilter 전에 실행 할 필터를 설정
-        http.addFilterBefore(apiLoginFilter, UsernamePasswordAuthenticationFilter.class);
+//        http.addFilterBefore(apiLoginFilter, UsernamePasswordAuthenticationFilter.class);
+
+        // api로 시작하는 모든 경로는 TokenCheckFilter 동작
+        http.addFilterBefore(
+                tokenCheckFilter(jwtUtil),
+                UsernamePasswordAuthenticationFilter.class
+        );
 
         // CSRF 토큰 비활성화 - 사용하지 않겠다
         http.csrf().disable();
 
         // 세션을 사용하지 않음
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
         return http.build();
+    }
+
+        private TokenCheckFilter tokenCheckFilter(JWTUtil jwtUtil) {
+            return new TokenCheckFilter(jwtUtil);
+
     }
 }
