@@ -34,7 +34,12 @@ public class TokenCheckFilter extends OncePerRequestFilter {
         log.info("Token Check Filter..................");
         log.info("JWTUtil: " + jwtUtil);
 
-        filterChain.doFilter(request, response);
+        try {
+            validateAccessToken(request);
+            filterChain.doFilter(request, response);
+        } catch (AccessTokenException accessTokenException) {
+            accessTokenException.sendResponseError(response);
+        }
     }
 
     // 토큰이 정상인지 아닌지 확인하는 메서드

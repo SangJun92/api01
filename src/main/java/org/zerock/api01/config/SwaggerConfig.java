@@ -8,6 +8,8 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Arrays;
+
 @Configuration
 public class SwaggerConfig {
 //  @Bean
@@ -35,6 +37,7 @@ public class SwaggerConfig {
     SecurityRequirement securityRequirement = new SecurityRequirement().addList("bearerAuth");
     return new OpenAPI()
             .components(new Components().addSecuritySchemes("bearerAuth", securityScheme))
+            .security(Arrays.asList(securityRequirement))
             .info(new Info()
                     .title("Boot API 01 Project Swagger")
                     .version("1.0.0"));
