@@ -7,8 +7,6 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.web.bind.annotation.RestController;
 
 @Configuration
 public class SwaggerConfig {
@@ -37,18 +35,18 @@ public class SwaggerConfig {
     SecurityRequirement securityRequirement = new SecurityRequirement().addList("bearerAuth");
     return new OpenAPI()
             .components(new Components().addSecuritySchemes("bearerAuth", securityScheme))
-            .info(new Info())
+            .info(new Info()
                     .title("Boot API 01 Project Swagger")
                     .version("1.0.0"));
   }
 
-  private ApiKey apiKey() {
-    return new ApiKey("Authorization", "Bearer Token", "header");
-  }
-
-  private SecurityContext securityContext() {
-    return SecurityContext.builder().securityReferences(defaultAuth())
-            .operationSelector(selector -> selector.requestMappingPattern().startsWith("/api/")).build();
-  }
+//  private ApiKey apiKey() {
+//    return new ApiKey("Authorization", "Bearer Token", "header");
+//  }
+//
+//  private SecurityContext securityContext() {
+//    return SecurityContext.builder().securityReferences(defaultAuth())
+//            .operationSelector(selector -> selector.requestMappingPattern().startsWith("/api/")).build();
+//  }
 
 }
