@@ -13,23 +13,52 @@
 <button class="btn1">CALL SERVER</button>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script>
-    const callServer = async() => {
+    const callServer = async () => {
         console.log("call server 1...")
+
+        // accessToken을 localStorage에서 취득
         const accessToken = localStorage.getItem("accessToken")
+        // accessToken이 있는지 없는지 확인
+        // accessToken의 데이터가 있으면 true
+        // accessToken의 데이터가 없으면 false
         if (!accessToken) {
             throw 'Cannot Find Access Token'
         }
-        const authHeader = {"authorization":`Bearer ${accessToken}`}
-        try{
-          const res = await axios.get("http://localhost:8080/api/sample/doA", {headers:authHeader})
+        // accessToken을 해더에 설정
+        const authHeader = {"authorization": `Bearer ${accessToken}`}
+        try {
+            // 실행하고 싶은 AJAX코드를 실행
+            const res = await axios.get("http://localhost:8080/api/sample/doA", {headers: authHeader})
 
-          return res.data
-        } catch(err) {
+            // 에러가 없으면 데이터를 반환
+            return res.data
+        } catch (err) {
+            // accessToken이 만료시 refreshToken을 실행
             if (err.response.data.msg === 'Expired Token') {
                 console.log("Refresh Your Token")
-                throw err.response.data.msg
+                try {
+                    // 비동기 처리로 refreshToken 실행을 위한 메서드를 실행
+                    await callRefresh()
+                    console.log("new tokens.... saved..")
+
+                    // 처음 실행되었던 자기자신을 실행
+                    return callServer()
+                } catch (refreshErr) {
+                    throw err.response.data.msg
+                }
             }
         }
+    }
+    const callRefresh = async () => {
+        // accessToken, refreshToken 취득
+        const accessToken = localStorage.getItem("accessToken")
+        const refreshToken = localStorage.getItem("refreshToken")
+        const tokens = {accessToken, refreshToken}
+
+        // AJAX로 refreshToken을 실행
+        const res = await axios.post("http://localhost:8080/refreshToken", tokens)
+        localStorage.setItem("accessToken", res.data.accessToken)
+        localStorage.setItem("refreshToken", res.data.refreshToken)
     }
 
     const resultDiv = document.querySelector(".result")
