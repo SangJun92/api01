@@ -16,7 +16,7 @@ import java.util.List;
 public class TodoSearchImpl extends QuerydslRepositorySupport implements TodoSearch {
 
     public TodoSearchImpl() {
-        super(TodoDTO.class);
+        super(Todo.class);
     }
 
     @Override
@@ -29,7 +29,7 @@ public class TodoSearchImpl extends QuerydslRepositorySupport implements TodoSea
 
             BooleanBuilder fromToBuilder = new BooleanBuilder();
             fromToBuilder.and(todo.dueDate.goe(pageRequestDTO.getFrom()));
-            fromToBuilder.and(todo.dueDate.goe(pageRequestDTO.getTo()));
+            fromToBuilder.and(todo.dueDate.loe(pageRequestDTO.getTo()));
             query.where(fromToBuilder);
         }
 

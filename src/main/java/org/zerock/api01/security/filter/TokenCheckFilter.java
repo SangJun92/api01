@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.zerock.api01.security.APIUserDetailsService;
 import org.zerock.api01.security.exception.AccessTokenException;
 import org.zerock.api01.util.JWTUtil;
 
@@ -20,6 +21,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class TokenCheckFilter extends OncePerRequestFilter {
 
+    private final APIUserDetailsService apiUserDetailsService;
     private final JWTUtil jwtUtil;
 
     @Override
