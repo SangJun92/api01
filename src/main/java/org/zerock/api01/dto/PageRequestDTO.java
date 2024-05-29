@@ -26,7 +26,7 @@ public class PageRequestDTO {
 
     private LocalDate from;
     private LocalDate to;
-    private boolean completed;
+    private Boolean completed;
 
     public String[] getTypes(){
         if(type == null || type.isEmpty()){
