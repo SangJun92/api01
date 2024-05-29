@@ -8,6 +8,8 @@ import org.zerock.api01.domain.Todo;
 import org.zerock.api01.dto.TodoDTO;
 import org.zerock.api01.repository.TodoRepository;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Log4j2
@@ -25,5 +27,15 @@ public class TodoServiceImpl implements TodoService {
         Long tno = todoRepository.save(todo).getTno();
 
         return tno;
+    }
+
+    @Override
+    public TodoDTO read(Long tno) {
+
+        Optional<Todo> result = todoRepository.findById(tno);
+
+        Todo todo = result.orElseThrow();
+
+        return modelMapper.map(todo, TodoDTO.class);
     }
 }

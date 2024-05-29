@@ -8,4 +8,6 @@ import org.zerock.api01.dto.TodoDTO;
 public interface TodoService {
 
     Long register(TodoDTO todoDTO);
+
+    TodoDTO read(Long tno);
 }
